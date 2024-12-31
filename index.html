@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cool Random Picker</title>
+    <title>rootdeyan - Random Picker</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -194,8 +194,7 @@
     <div class="picker-container" id="picker-container"></div>
     <div class="right-panel">
         <h2>Winners</h2>
-        <ul id="winners-list" style="padding-left: 20px; list-style-type: decimal;">
-        </ul>
+        <ul id="winners-list" style="padding-left: 20px; list-style-type: decimal;"></ul>
     </div>
 
     <script>
@@ -272,6 +271,14 @@
                     const winnerItem = document.createElement('li');
                     winnerItem.textContent = winnerName;
                     document.getElementById('winners-list').appendChild(winnerItem);
+
+                    // Remove the winner from the input fields
+                    const inputFields = document.querySelectorAll('.name-input');
+                    inputFields.forEach(input => {
+                        if (input.value === winnerName) {
+                            input.remove();
+                        }
+                    });
                 }
             }, 100);
         }
