@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rootdeyan - Random Picker</title>
+    <title>Cool Random Picker</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -56,6 +56,23 @@
 
         .right-panel h2 {
             margin-top: 0;
+        }
+
+        .clear-button {
+            display: inline-block;
+            padding: 10px;
+            margin-bottom: 15px;
+            background: #FF4136;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        .clear-button:hover {
+            background: #FF6347;
         }
 
         .panel::-webkit-scrollbar, .right-panel::-webkit-scrollbar {
@@ -193,6 +210,7 @@
     </div>
     <div class="picker-container" id="picker-container"></div>
     <div class="right-panel">
+        <button class="clear-button" onclick="clearWinners()">Clear</button>
         <h2>Winners</h2>
         <ul id="winners-list" style="padding-left: 20px; list-style-type: decimal;"></ul>
     </div>
@@ -211,6 +229,9 @@
             const inputs = document.querySelectorAll('.name-input');
             const names = Array.from(inputs).map(input => input.value);
             localStorage.setItem('savedNames', JSON.stringify(names));
+
+            const winners = document.getElementById('winners-list').innerHTML;
+            localStorage.setItem('savedWinners', winners);
         }
 
         function loadNames() {
@@ -225,6 +246,9 @@
                 input.value = name;
                 nameFields.appendChild(input);
             });
+
+            const savedWinners = localStorage.getItem('savedWinners') || '';
+            document.getElementById('winners-list').innerHTML = savedWinners;
         }
 
         window.addEventListener('beforeunload', saveNames);
@@ -281,6 +305,11 @@
                     });
                 }
             }, 100);
+        }
+
+        function clearWinners() {
+            document.getElementById('winners-list').innerHTML = '';
+            localStorage.removeItem('savedWinners');
         }
     </script>
 </body>
