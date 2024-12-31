@@ -223,17 +223,24 @@
 
             let counter = 0;
             const totalCycles = 30;
+            const seenIndexes = new Set();
+
             const interval = setInterval(() => {
                 const items = document.querySelectorAll('.picker-item');
                 items.forEach(item => item.classList.remove('highlight'));
 
-                const randomIndex = Math.floor(Math.random() * items.length);
+                let randomIndex;
+                do {
+                    randomIndex = Math.floor(Math.random() * items.length);
+                } while (seenIndexes.has(randomIndex) && seenIndexes.size < items.length);
+
+                seenIndexes.add(randomIndex);
                 items[randomIndex].classList.add('highlight');
 
                 counter++;
                 if (counter >= totalCycles) {
                     clearInterval(interval);
-                    alert(`Winner: ${items[randomIndex].textContent}`);
+                    document.querySelector('.highlight').textContent += ' (Winner)';
                 }
             }, 100);
         }
