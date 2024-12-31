@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RD - rootdeyan - Random Picker</title>
+    <title>Cool Random Picker</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -36,16 +36,38 @@
             scrollbar-color: #007BFF #1a1a1a;
         }
 
-        .panel::-webkit-scrollbar {
+        .right-panel {
+            width: 100%;
+            max-width: 300px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            height: auto;
+            overflow-y: auto;
+            position: fixed;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            scrollbar-width: thin;
+            scrollbar-color: #007BFF #1a1a1a;
+        }
+
+        .right-panel h2 {
+            margin-top: 0;
+        }
+
+        .panel::-webkit-scrollbar, .right-panel::-webkit-scrollbar {
             width: 8px;
         }
 
-        .panel::-webkit-scrollbar-thumb {
+        .panel::-webkit-scrollbar-thumb, .right-panel::-webkit-scrollbar-thumb {
             background-color: #007BFF;
             border-radius: 10px;
         }
 
-        .panel::-webkit-scrollbar-track {
+        .panel::-webkit-scrollbar-track, .right-panel::-webkit-scrollbar-track {
             background: #1a1a1a;
         }
 
@@ -109,6 +131,7 @@
             width: 100%;
             max-width: 600px;
             margin-left: 320px;
+            margin-right: 320px;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
@@ -142,7 +165,7 @@
                 align-items: center;
             }
 
-            .panel {
+            .panel, .right-panel {
                 position: static;
                 width: 90%;
                 margin-bottom: 20px;
@@ -150,6 +173,7 @@
 
             .picker-container {
                 margin-left: 0;
+                margin-right: 0;
             }
         }
     </style>
@@ -168,6 +192,11 @@
         </div>
     </div>
     <div class="picker-container" id="picker-container"></div>
+    <div class="right-panel">
+        <h2>Winners</h2>
+        <ul id="winners-list" style="padding-left: 20px; list-style-type: decimal;">
+        </ul>
+    </div>
 
     <script>
         function addInputField() {
@@ -223,24 +252,26 @@
 
             let counter = 0;
             const totalCycles = 30;
-            const seenIndexes = new Set();
-
             const interval = setInterval(() => {
                 const items = document.querySelectorAll('.picker-item');
                 items.forEach(item => item.classList.remove('highlight'));
 
-                let randomIndex;
-                do {
-                    randomIndex = Math.floor(Math.random() * items.length);
-                } while (seenIndexes.has(randomIndex) && seenIndexes.size < items.length);
+                const randomIndex = Math.floor(Math.random() * items.length);
+                const selectedItem = items[randomIndex];
 
-                seenIndexes.add(randomIndex);
-                items[randomIndex].classList.add('highlight');
+                selectedItem.classList.add('highlight');
 
                 counter++;
                 if (counter >= totalCycles) {
                     clearInterval(interval);
-                    document.querySelector('.highlight').textContent += ' (Winner)';
+
+                    // Move the winner to the winners list
+                    const winnerName = selectedItem.textContent;
+                    selectedItem.remove();
+
+                    const winnerItem = document.createElement('li');
+                    winnerItem.textContent = winnerName;
+                    document.getElementById('winners-list').appendChild(winnerItem);
                 }
             }, 100);
         }
