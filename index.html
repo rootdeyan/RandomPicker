@@ -58,7 +58,7 @@
             margin-top: 0;
         }
 
-        .clear-button {
+        .clear-button, .clear-inputs-button {
             display: inline-block;
             padding: 10px;
             margin-bottom: 15px;
@@ -71,7 +71,7 @@
             width: 100%;
         }
 
-        .clear-button:hover {
+        .clear-button:hover, .clear-inputs-button:hover {
             background: #FF6347;
         }
 
@@ -197,6 +197,7 @@
 </head>
 <body>
     <div class="panel">
+        <button class="clear-inputs-button" onclick="clearInputs()">Clear Inputs</button>
         <h2>Enter Names</h2>
         <div id="name-fields">
             <input type="text" class="name-input" placeholder="Enter name">
@@ -210,7 +211,7 @@
     </div>
     <div class="picker-container" id="picker-container"></div>
     <div class="right-panel">
-        <button class="clear-button" onclick="clearWinners()">Clear</button>
+        <button class="clear-button" onclick="clearWinners()">Clear Winners</button>
         <h2>Winners</h2>
         <ul id="winners-list" style="padding-left: 20px; list-style-type: decimal;"></ul>
     </div>
@@ -223,6 +224,25 @@
             input.className = 'name-input';
             input.placeholder = 'Enter name';
             nameFields.appendChild(input);
+        }
+
+        function clearInputs() {
+            const inputs = document.querySelectorAll('.name-input');
+            inputs.forEach(input => {
+                if (!input.value.trim()) {
+                    input.remove();
+                } else {
+                    input.value = '';
+                }
+            });
+            ensureDefaultInputs();
+        }
+
+        function ensureDefaultInputs() {
+            const nameFields = document.getElementById('name-fields');
+            while (nameFields.children.length < 3) {
+                addInputField();
+            }
         }
 
         function saveNames() {
@@ -247,12 +267,16 @@
                 nameFields.appendChild(input);
             });
 
+            ensureDefaultInputs();
+
             const savedWinners = localStorage.getItem('savedWinners') || '';
             document.getElementById('winners-list').innerHTML = savedWinners;
         }
 
-        window.addEventListener('beforeunload', saveNames);
-        window.addEventListener('load', loadNames);
+        function clearWinners() {
+            document.getElementById('winners-list').innerHTML = '';
+            localStorage.removeItem('savedWinners');
+        }
 
         function startPicker() {
             const inputs = document.querySelectorAll('.name-input');
@@ -303,14 +327,14 @@
                             input.remove();
                         }
                     });
+
+                    ensureDefaultInputs();
                 }
             }, 100);
         }
 
-        function clearWinners() {
-            document.getElementById('winners-list').innerHTML = '';
-            localStorage.removeItem('savedWinners');
-        }
+        window.addEventListener('beforeunload', saveNames);
+        window.addEventListener('load', loadNames);
     </script>
 </body>
 </html>
