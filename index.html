@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rootdeyan | Random Name Picker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #1a1a1a, #282c34);
+            color: white;
+            margin: 0;
+        }
+
+        .panel, .right-panel {
+            width: 100%;
+            max-width: 300px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            height: auto;
+            overflow-y: auto;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            scrollbar-width: thin;
+            scrollbar-color: #007BFF #1a1a1a;
+        }
+
+        .panel {
+            left: 0;
+        }
+
+        .right-panel {
+            right: 0;
+        }
+
+        .panel::-webkit-scrollbar, .right-panel::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .panel::-webkit-scrollbar-thumb, .right-panel::-webkit-scrollbar-thumb {
+            background-color: #007BFF;
+            border-radius: 10px;
+        }
+
+        .panel::-webkit-scrollbar-track, .right-panel::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        .panel input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(to bottom, #ffffff, #e0e0e0);
+            color: #333;
+            outline: none;
+            font-size: 16px;
+            transition: box-shadow 0.3s, transform 0.3s;
+        }
+
+        .panel input:hover {
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.5);
+            transform: scale(1.05);
+        }
+
+        .panel input:focus {
+            box-shadow: 0 4px 15px #007BFF;
+            background: linear-gradient(to bottom, #f0f8ff, #dbefff);
+        }
+
+        .panel input::placeholder {
+            color: #666;
+            font-style: italic;
+        }
+
+        .panel .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .panel button, .clear-button, .clear-inputs-button {
+            width: calc(100% - 10px);
+            flex: 1;
+            margin: 0 5px;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(to bottom, #007BFF, #0056b3);
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: box-shadow 0.3s, transform 0.3s;
+        }
+
+        .panel button:hover, .clear-button:hover, .clear-inputs-button:hover {
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.8);
+            transform: scale(1.05);
+        }
+
+        h2 {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .picker-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: 320px;
+            margin-right: 320px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .picker-item {
+            width: calc(33.333% - 10px);
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to bottom, #ffffff, #e0e0e0);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            color: #333;
+            font-weight: bold;
+            font-size: 16px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .picker-item.highlight {
+            background: linear-gradient(to bottom, #007BFF, #0056b3);
+            color: white;
+            transform: scale(1.2);
+        }
+
+        .right-panel ul {
+            padding-left: 20px;
+            list-style-type: decimal;
+        }
+
+        .right-panel li {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            background: linear-gradient(to bottom, #4caf50, #388e3c);
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(0, 128, 0, 0.5);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .right-panel li:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(0, 128, 0, 0.8);
+        }
+
+        @media screen and (max-width: 768px) {
+            body {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .panel, .right-panel {
+                position: static;
+                width: 90%;
+                margin-bottom: 20px;
+            }
+
+            .picker-container {
+                margin-left: 0;
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <button class="clear-inputs-button" onclick="clearInputs()">Clear name list below</button>
+        <h2>Name List:</h2>
+        <div id="name-fields">
+            <input type="text" class="name-input" placeholder="Enter name">
+            <input type="text" class="name-input" placeholder="Enter name">
+            <input type="text" class="name-input" placeholder="Enter name">
+        </div>
+        <div class="button-container">
+            <button onclick="addInputField()">+ Add more</button>
+            <button onclick="startPicker()">Go</button>
+        </div>
+    </div>
+    <div class="picker-container" id="picker-container"></div>
+    <div class="right-panel">
+        <button class="clear-button" onclick="clearWinners()">Clear winners list below</button>
+        <h2 align="center">Winners</h2>
+        <ul id="winners-list"></ul>
+    </div>
+
+    <script>
+        function addInputField() {
+            const nameFields = document.getElementById('name-fields');
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'name-input';
+            input.placeholder = 'Enter name';
+            nameFields.appendChild(input);
+        }
+
+        function clearInputs() {
+            const inputs = document.querySelectorAll('.name-input');
+            inputs.forEach(input => {
+                if (!input.value.trim()) {
+                    input.remove();
+                } else {
+                    input.value = '';
+                }
+            });
+            ensureDefaultInputs();
+        }
+
+        function ensureDefaultInputs() {
+            const nameFields = document.getElementById('name-fields');
+            while (nameFields.children.length < 3) {
+                addInputField();
+            }
+        }
+
+        function saveNames() {
+            const inputs = document.querySelectorAll('.name-input');
+            const names = Array.from(inputs).map(input => input.value);
+            localStorage.setItem('savedNames', JSON.stringify(names));
+
+            const winners = document.getElementById('winners-list').innerHTML;
+            localStorage.setItem('savedWinners', winners);
+        }
+
+        function loadNames() {
+            const savedNames = JSON.parse(localStorage.getItem('savedNames')) || [];
+            const nameFields = document.getElementById('name-fields');
+            nameFields.innerHTML = '';
+            savedNames.forEach(name => {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'name-input';
+                input.placeholder = 'Enter name';
+                input.value = name;
+                nameFields.appendChild(input);
+            });
+
+            ensureDefaultInputs();
+
+            const savedWinners = localStorage.getItem('savedWinners') || '';
+            document.getElementById('winners-list').innerHTML = savedWinners;
+        }
+
+        function clearWinners() {
+            document.getElementById('winners-list').innerHTML = '';
+            localStorage.removeItem('savedWinners');
+        }
+
+        function startPicker() {
+            const inputs = document.querySelectorAll('.name-input');
+            const names = Array.from(inputs).map(input => input.value).filter(name => name.trim());
+
+            if (names.length === 0) {
+                alert('Please enter at least one name.');
+                return;
+            }
+
+            const pickerContainer = document.getElementById('picker-container');
+            pickerContainer.innerHTML = '';
+
+            names.forEach(name => {
+                const div = document.createElement('div');
+                div.className = 'picker-item';
+                div.textContent = name;
+                pickerContainer.appendChild(div);
+            });
+
+            let counter = 0;
+            const totalCycles = 30;
+            const interval = setInterval(() => {
+                const items = document.querySelectorAll('.picker-item');
+                items.forEach(item => item.classList.remove('highlight'));
+
+                const randomIndex = Math.floor(Math.random() * items.length);
+                const selectedItem = items[randomIndex];
+
+                selectedItem.classList.add('highlight');
+
+                counter++;
+                if (counter >= totalCycles) {
+                    clearInterval(interval);
+
+                    // Move the winner to the winners list
+                    const winnerName = selectedItem.textContent;
+                    selectedItem.remove();
+
+                    const winnerItem = document.createElement('li');
+                    winnerItem.textContent = winnerName;
+                    document.getElementById('winners-list').appendChild(winnerItem);
+
+                    // Remove the winner from the input fields
+                    const inputFields = document.querySelectorAll('.name-input');
+                    inputFields.forEach(input => {
+                        if (input.value === winnerName) {
+                            input.remove();
+                        }
+                    });
+
+                    ensureDefaultInputs();
+                }
+            }, 100);
+        }
+
+        window.addEventListener('beforeunload', saveNames);
+        window.addEventListener('load', loadNames);
+    </script>
+</body>
+</html>
